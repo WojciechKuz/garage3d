@@ -1,0 +1,78 @@
+
+Allrighty, a więc MVC znaczy model-view-controller.
+W poprawnej kolejności to jest tak:
+- Model - dane, np. w bazie danych, oraz obliczenia (jeśli są potrzebne) logika biznesowa
+- Controller - wymiana informacji pomiędzy dwoma pozostałymi
+- View - widok, wyświetlana dla użytkownika strona lub aplikacja, obsługa wprowadzanych danych
+*nie dokładnie ale ok. Różne żródła podają różne detale, np. czy kontroler powinien obsługiwać wprowadzanie danych.
+
+## Model:
+Plan bazy danych:
+
+1. User
+  - uid
+  - username
+  - password (później dodam wraz z logowaniem, jak będzie haszowanie)
+  - email
+  - about (description about user Like "Hi, i'm student interested in...")
+  maybe:
+  - about
+  - isMaker
+  - region
+  NIE - isPublic
+
+2. Item
+  - iid
+  - itemName
+  - author* (User.uid)
+  - description
+  later:
+  - likes (oddzielne, żeby nie marnować mocy obliczeniowej przy każdym wyświetleniu/polubieniu przedmiotu na "SELECT COUNT(*) FROM LikedItems WHERE itemid == likedItem")
+  maybe:
+  - tags
+
+3. File (stls)
+  - fid
+  - item* (Item.iid)
+  - filename
+  - FILE/BLOB
+
+4. Photo
+  - pid
+  - item* (Item.iid)
+  - photoName/photoDescr (for speech synthesizer)
+  - FILE/IMG
+
+5. LikedItems
+  - user* (User.uid)
+  - likedItem* (Item.iid)
+
+6. Comment
+  - item* (Item.iid)
+  - user* (User.uid)
+  - comment
+
+nazwy pól: aBb? / a_bb? (SQL ignoruje case z tego co pamiętam, także Aa == aa)
+
+
+## Controller:
+1 albo 2 controllery (listing wydruków i strona przedmiotu)
+1.ItemController? MainController? ListingController?
+2.SiteController? ProjectController? ItemController?
+
+Ok, niech będzie:
+1. MainController
+2. ItemController (później)
+
+## View:
+View? A jakoś tam posklejam. W zeszycie rozrysowane.
+
+
+Nieomawiawiane rzeczy, które będą mi potrzebne:
+- Pliki w bazie danych
+- Obrazki w bazie danych
+- Wyświetlanie Galerii
+- Przechowywanie haseł w bazie danych
+- Logowanie
+- Wyświetlanie 3D (później)
+

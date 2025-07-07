@@ -1,7 +1,8 @@
 # Garage 3D
-Strona z plikami do druku 3D (.stl)
+Garaged - Strona z plikami do druku 3D (.stl)
+(nazwa jest już w użyciu, trzeba by zmienić)
 
-Strona do dzielenia się modelami do druku 3D, podobna jak printables.com.
+Strona do dzielenia się modelami do druku 3D, podobna jak [printables.com](https://www.printables.com).
 Użytkownicy mogą umieszczać swoje przedmioty do wydruku (publicznie lub prywatnie).
 Można przeglądać, polubić i pobierać przedmioty innych użytkowników. Przedmioty mogą
 składać się z kilku plików stl. Do strony przedmiotu dołączony jest opis, zdjęcia przedmiotu,
