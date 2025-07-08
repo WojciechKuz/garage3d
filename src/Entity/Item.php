@@ -22,6 +22,11 @@ class Item
     #[ORM\Column(length: 4096)]
     private ?string $description = null;
 
+    public function __toString()
+    {
+        return $this->id . ' - ' . $this->itemName . ' - ' . $this->description;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

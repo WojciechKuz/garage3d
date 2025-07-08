@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MainController!{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+        td, th {
+            border: 1px solid grey;
+        }
+        /* font-family: 'Roboto Light',system-ui" */
+    </style>
+    {% set rowWidth = 3 %}
+    <h1>Garage3D 🛠🧰🖨</h1>
+    <!--<p>There are {/{ itemCount }} items on this page</p>-->
+    <h2>Browse out of {{ itemCount }} items</h2>
+    <div>
+        <table>
+            <tr>
+                {% for item in items %}
+                <td>
+                    <div>
+                        <h4>{{ item.itemName }}</h4>
+                    </div>
+                </td>
+                {% if loop.index0 % rowWidth == rowWidth - 1 %}
+                </tr>
+                <tr>
+                {% endif %}
+                {% endfor %}
+            </tr>
+        </table>
+        {% if previous >= 0 %}
+            <!--<a href="{/{ path('conference', { slug: conference.slug, offset: previous }) }}">&larr; Previous Comments</a> -->
+            <a href="{{ path('item_list', { offset: previous }) }}">&larr; Previous Items</a>
+        {% endif %}
+        {% if next < items|length %}
+            <!--<a href="{/{ path('conference', { slug: conference.slug, offset: next }) }}">&rarr; Next Comments</a>-->
+            <a href="{{ path('item_list', { offset: next }) }}">&rarr; Next Items</a>
+        {% endif %}
+        <br/>
+        <a href="{{ path('item_list', { offset: first }) }}">First Page</a>
+        <a href="{{ path('item_list', { offset: last }) }}">Last Page</a>
+        <br/>
+        <a href="{{ path('app_main') }}">back to title page</a>
+    </div>
+    <div>
+        <a href="{{ path('app_main') }}">Add your item</a> <!-- No form yet, redirects to home -->
+    </div>
+{% endblock %}

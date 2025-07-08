@@ -1,4 +1,4 @@
-
+✖✔
 Allrighty, a więc MVC znaczy model-view-controller.
 W poprawnej kolejności to jest tak:
 - Model - dane, np. w bazie danych, oraz obliczenia (jeśli są potrzebne) logika biznesowa
@@ -21,11 +21,12 @@ Plan bazy danych:
   - region
   NIE - isPublic
 
+FIXME id'ki od razu są. Usuń iid
 2. Item
-  - iid
-  - itemName
+  - iid         ✔
+  - itemName    ✔
   - author* (User.uid)
-  - description
+  - description ✔
   later:
   - likes (oddzielne, żeby nie marnować mocy obliczeniowej przy każdym wyświetleniu/polubieniu przedmiotu na "SELECT COUNT(*) FROM LikedItems WHERE itemid == likedItem")
   maybe:
@@ -76,3 +77,38 @@ Nieomawiawiane rzeczy, które będą mi potrzebne:
 - Logowanie
 - Wyświetlanie 3D (później)
 
+
+
+Wszystkie typy w bazie danych:
+Main Types
+  * string or ascii_string
+  * text
+  * boolean
+  * integer or smallint or bigint
+  * float
+
+Relationships/Associations
+  * relation a wizard will help you build the relation
+  * ManyToOne
+  * OneToMany
+  * ManyToMany
+  * OneToOne
+
+Array/Object Types
+  * array or simple_array
+  * json
+  * object
+  * binary
+  * blob
+
+Date/Time Types
+  * datetime or datetime_immutable
+  * datetimetz or datetimetz_immutable
+  * date or date_immutable
+  * time or time_immutable
+  * dateinterval
+
+Other Types
+  * enum
+  * decimal
+  * guid

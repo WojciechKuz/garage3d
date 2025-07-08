@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Item;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,6 +15,17 @@ class ItemRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Item::class);
+    }
+
+    public const PAGINATION_PAGE_SIZE = 6;
+    public function getItemPaginator(int $offset): Paginator
+    {
+        $query = $this->createQueryBuilder('i')
+            ->orderBy('i.id', 'DESC')   // later added items will be first
+            ->setMaxResults(self::PAGINATION_PAGE_SIZE)
+            ->setFirstResult($offset)
+            ->getQuery();
+        return new Paginator($query);
     }
 
     //    /**
