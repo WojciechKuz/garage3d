@@ -10,7 +10,23 @@
         {% block javascripts %}
         {% endblock %}
     </head>
-    <body>
+    <body style="margin: 0">
+    {% set isLoggedIn = false %}
+    <div style="width: 100%; position: sticky; top: 0; left: 0; right: 0; background-color: #93c5fd; padding: 8px; margin: 0; overflow: hidden; box-sizing: border-box">
+        <span style="float: right">
+            {% if is_granted('ROLE_USER') %}
+                <span >Hello, {{ app.user.username }}!</span> <!-- zalogowano jako... -->
+                <span style="padding-left: 20px"></span>
+                <a href="{{ path('app_logout') }}" style="text-decoration: none">log out</a>
+            {% else %}
+                <a href="{{ path('app_login') }}">Log in</a>
+                <span style="padding-left: 20px"></span>
+                <a href="{{ path('app_register') }}">Register</a>
+            {% endif %}
+        </span>
+    </div>
+    <div style="margin: 8px">
         {% block body %}{% endblock %}
+    </div>
     </body>
 </html>

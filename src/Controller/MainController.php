@@ -12,12 +12,34 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
 final class MainController extends AbstractController
 {
     public function __construct(
         private Environment $twig,
         private ItemRepository $itemRepository
     ) {}
+
+    public function registration(UserPasswordHasherInterface $passwordHasher): void { // return Response
+        $user = 'user from form';
+        $plaintextPassword = 'password';
+        $hashedPassword = $passwordHasher->hashPassword(
+            $user,
+            $plaintextPassword
+        );
+    }
+
+    public function validatedActionExample(UserPasswordHasherInterface $passwordHasher, UserInterface $user): void
+    {
+        // ... e.g. get the password from a "confirm deletion" dialog
+        $plaintextPassword = 'password';
+
+        if (!$passwordHasher->isPasswordValid($user, $plaintextPassword)) {
+            throw new AccessDeniedHttpException();
+        }
+    }
 
     /**
      * @throws SyntaxError
@@ -32,6 +54,21 @@ final class MainController extends AbstractController
         return new Response(
             $this->twig->render('main/index.html.twig', [
                 'itemCount' => $itemCount,
+            ])
+        );
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    #[Route('/login/{isnew}', name: 'login')]
+    public function login(int $isNewInt = 0): Response {
+        $isNew = ($isNewInt === 1);
+        return new Response(
+            $this->twig->render('main/login.html.twig', [
+                'isNew' => $isNew,
             ])
         );
     }
