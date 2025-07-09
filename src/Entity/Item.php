@@ -13,14 +13,14 @@ class Item
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $iid = null;
-
     #[ORM\Column(length: 255)]
     private ?string $itemName = null;
 
     #[ORM\Column(length: 4096)]
     private ?string $description = null;
+
+    #[ORM\ManyToOne(inversedBy: 'items')]
+    private ?User $author = null;
 
     public function __toString()
     {
@@ -30,18 +30,6 @@ class Item
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIid(): ?int
-    {
-        return $this->iid;
-    }
-
-    public function setIid(int $iid): static
-    {
-        $this->iid = $iid;
-
-        return $this;
     }
 
     public function getItemName(): ?string
@@ -64,6 +52,18 @@ class Item
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
 
         return $this;
     }

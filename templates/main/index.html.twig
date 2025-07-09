@@ -3,25 +3,22 @@
 {% block title %}Hello MainController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 90%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    td, th {
-        border: 1px solid grey;
-    }
-    /* font-family: 'Roboto Light',system-ui" */
-</style>
-<div class="example-wrapper">
-    <h1>Garage3D 🛠🧰🖨</h1>
-    <h2>Your 3D models for 3D printing</h2>
-</div>
-<div style="margin: 1em auto; max-width: 800px; width: 90%"> <!-- I experienced the pain of centering a div. -->
-    <!--<a href="{/{ path('login', { isnew: 0 }) }}">Log in</a>
-    <span style="padding-left: 20px"></span>
-    <a href="{/{ path('login', { isnew: 1 }) }}">Register</a> NO LOGIN PAGE YET
-    <br/>
-    <a href="{/{ path('item_list', { offset: 0 }) }}">Browse {/{ itemCount }} items</a>-->
-</div>
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 90%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+        td, th {
+            border: 1px solid grey;
+        }
+        /* font-family: 'Roboto Light',system-ui" */
+    </style>
 
+    <div class="example-wrapper">
+        <h1>Garage3D 🛠🧰🖨</h1>
+        <h2>Your 3D models for 3D printing</h2>
+    </div>
+
+    <div style="margin: 1em auto; max-width: 800px; width: 90%"> <!-- I experienced the pain of centering a div. -->
+        <a href="{{ path('item_list', { offset: 0 }) }}">Browse {{ itemCount }} items</a>
+    </div>
 <p></p>
 {% endblock %}

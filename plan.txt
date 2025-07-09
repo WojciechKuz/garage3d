@@ -9,22 +9,24 @@ W poprawnej kolejności to jest tak:
 ## Model:
 Plan bazy danych:
 
+Note: Każda encja zawiera już id, nie potrzeba ich dodawać
+
 1. User - dodaj przez symfony make:user!
   - uid         ✔
   - username    ✔ Unique identifier (displayed)
   - password    ✔
   - email       ✔
   - about (description about user Like "Hi, i'm student interested in...") ✔
+  - items []* ...
   maybe:
   - isMaker
   - region
   NIE - isPublic
 
-FIXME id'ki od razu są. Usuń iid
 2. Item
   - iid         ✔
   - itemName    ✔
-  - author* (User.uid)
+  - author* (User.uid) ✔
   - description ✔
   later:
   - likes (oddzielne, żeby nie marnować mocy obliczeniowej przy każdym wyświetleniu/polubieniu przedmiotu na "SELECT COUNT(*) FROM LikedItems WHERE itemid == likedItem")

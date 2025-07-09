@@ -13,15 +13,18 @@
     </style>
     {% set rowWidth = 3 %}
     <h1>Garage3D 🛠🧰🖨</h1>
-    <!--<p>There are {/{ itemCount }} items on this page</p>-->
     <h2>Browse out of {{ itemCount }} items</h2>
-    <div>
+    {% if not is_granted('ROLE_USER') %}
+        Log in to post your own creations!
+    {% endif %}
+    <div style="margin-top: 16px">
         <table>
             <tr>
                 {% for item in items %}
                 <td>
                     <div>
                         <h4>{{ item.itemName }}</h4>
+                        <p>by {{ item.author.username }}</p>
                     </div>
                 </td>
                 {% if loop.index0 % rowWidth == rowWidth - 1 %}
@@ -44,6 +47,9 @@
         <a href="{{ path('item_list', { offset: last }) }}">Last Page</a>
         <br/>
         <a href="{{ path('app_main') }}">back to title page</a>
+        {% if is_granted('ROLE_USER') %}
+            TODO Here will be placed a button to add your items
+        {% endif %}
     </div>
     <div>
         <a href="{{ path('app_main') }}">Add your item</a> <!-- No form yet, redirects to home -->
