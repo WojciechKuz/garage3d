@@ -76,7 +76,7 @@ Nieomawiawiane rzeczy, które będą mi potrzebne:
 - DONE Logowanie. Tu jest wszystko opisane jak skonfigurować: https://symfony.com/doc/6.4/security.html#the-user
 - Wyświetlanie 3D (później)
 
-
+FIXME favicon.png się nie wyświetla :(
 
 
 
