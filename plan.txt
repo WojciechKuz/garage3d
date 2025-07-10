@@ -17,7 +17,6 @@ Note: Każda encja zawiera już id, nie potrzeba ich dodawać
   - password    ✔
   - email       ✔
   - about (description about user Like "Hi, i'm student interested in...") ✔
-  - items []* ...
   maybe:
   - isMaker
   - region
@@ -26,7 +25,7 @@ Note: Każda encja zawiera już id, nie potrzeba ich dodawać
 2. Item
   - iid         ✔
   - itemName    ✔
-  - author* (User.uid) ✔
+  - author* (User.uid) ✔ (author_id)
   - description ✔
   later:
   - likes (oddzielne, żeby nie marnować mocy obliczeniowej przy każdym wyświetleniu/polubieniu przedmiotu na "SELECT COUNT(*) FROM LikedItems WHERE itemid == likedItem")
@@ -34,16 +33,20 @@ Note: Każda encja zawiera już id, nie potrzeba ich dodawać
   - tags
 
 3. File (stls)
-  - fid
-  - item* (Item.iid)
-  - filename
-  - FILE/BLOB
+  - fid         ✔
+  - item* (Item.iid) ✔
+  - filename    ✔ (jako original)
+  - FILE/BLOB   ✖
+  Zamiast tego:
+  - server_filename ✔
 
 4. Photo
-  - pid
-  - item* (Item.iid)
-  - photoName/photoDescr (for speech synthesizer)
-  - FILE/IMG
+  - pid         ✔
+  - item* (Item.iid) ✔
+  - photoname   ✔
+  - FILE/IMG    ✖
+  Zamiast tego:
+  - server_photoname ✔
 
 5. LikedItems
   - user* (User.uid)
@@ -71,7 +74,7 @@ View? A jakoś tam posklejam. W zeszycie rozrysowane.
 
 
 Nieomawiawiane rzeczy, które będą mi potrzebne:
-- Pliki w bazie danych
+- Pliki w bazie danych. Upload plików: https://symfony.com/doc/6.4/controller/upload_file.html
 - Obrazki w bazie danych
 - Wyświetlanie Galerii
 - Przechowywanie haseł w bazie danych
@@ -81,7 +84,9 @@ Nieomawiawiane rzeczy, które będą mi potrzebne:
 FIXME favicon.png się nie wyświetla :(
 
 
-
+W php.ini włączyłem rozszerzenie fileinfo,
+post_max_size = 32M (z 8 na 32)
+i zmieniłem upload_max_filesize = 16M (z 2 na 16).
 
 
 

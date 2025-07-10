@@ -47,11 +47,13 @@
         <a href="{{ path('item_list', { offset: last }) }}">Last Page</a>
         <br/>
         <a href="{{ path('app_main') }}">back to title page</a>
-        {% if is_granted('ROLE_USER') %}
-            TODO Here will be placed a button to add your items
-        {% endif %}
+        <br/>
     </div>
     <div>
-        <a href="{{ path('app_main') }}">Add your item</a> <!-- No form yet, redirects to home -->
+        {% if is_granted('ROLE_USER') %}
+            <!--TODO Here will be placed a button to add your items-->
+            <a href="{{ path('add_item') }}">Add your item</a> <!-- No form yet, redirects to home -->
+        {% endif %}
+
     </div>
 {% endblock %}

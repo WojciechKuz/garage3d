@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MainController!{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 90%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+        td, th {
+            border: 1px solid grey;
+        }
+        /* font-family: 'Roboto Light',system-ui" */
+    </style>
+
+    <!-- This addItem page will be accessible from button additem in item list (when logged in).
+         There will be also form in user's item list -->
+    <div class="example-wrapper">
+        <h1>Garage3D 🛠🧰🖨</h1>
+        <h2>Add your item</h2>
+    </div>
+    <div>
+        {{ form(newItemForm) }}
+    </div>
+
+    Here will be also private toggle. (If item should be private)
+    <p></p>
+{% endblock %}

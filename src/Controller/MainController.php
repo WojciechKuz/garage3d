@@ -2,11 +2,23 @@
 
 namespace App\Controller;
 
+use App\Entity\File;
+use App\Entity\Item;
+use App\Entity\Photo;
+use App\Form\ItemForm;
+use App\Repository\FileRepository;
 use App\Repository\ItemRepository;
+use App\Repository\PhotoRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Constraints\Image;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -19,27 +31,11 @@ final class MainController extends AbstractController
 {
     public function __construct(
         private Environment $twig,
-        private ItemRepository $itemRepository
+        private ItemRepository $itemRepository,
+        private FileRepository $fileRepository,
+        private PhotoRepository $photoRepository,
+        private EntityManagerInterface $entityManager,
     ) {}
-
-    public function registration(UserPasswordHasherInterface $passwordHasher): void { // return Response
-        $user = 'user from form';
-        $plaintextPassword = 'password';
-        $hashedPassword = $passwordHasher->hashPassword(
-            $user,
-            $plaintextPassword
-        );
-    }
-
-    public function validatedActionExample(UserPasswordHasherInterface $passwordHasher, UserInterface $user): void
-    {
-        // ... e.g. get the password from a "confirm deletion" dialog
-        $plaintextPassword = 'password';
-
-        if (!$passwordHasher->isPasswordValid($user, $plaintextPassword)) {
-            throw new AccessDeniedHttpException();
-        }
-    }
 
     /**
      * @throws SyntaxError
@@ -99,5 +95,79 @@ final class MainController extends AbstractController
                 'last' => $itemCount - ItemRepository::PAGINATION_PAGE_SIZE,
             ])
         );
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    #[Route('/additem', name: 'add_item')]
+    public function addItem(
+        Request $request, SluggerInterface $slugger,
+        #[Autowire('%kernel.project_dir%/public/uploads/stl')] string $stlDirectory,
+        #[Autowire('%kernel.project_dir%/public/uploads/images')] string $imageDirectory
+    ): Response {
+        $item = new Item();
+        $form = $this->createForm(ItemForm::class, $item);
+        $form->handleRequest($request);
+
+        //$item->setItemName($form->get('itemName')->getData());
+        //$item->setDescription($form->get('description')->getData());
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $item->setAuthor($this->getUser()); // itemName, description automatic, author manual
+            $this->entityManager->persist($item);
+            $this->entityManager->flush();
+
+            /** @var UploadedFile $stlFiles */
+            $stlFiles = $form->get('files')->getData();
+            if($stlFiles) {
+                foreach ($stlFiles as $stlFile) {
+                    // create file entity, write to DB, save to disc
+                    $file = new File();
+                    $file->setItem($item);
+                    $originalFilename = (pathinfo($stlFile->getClientOriginalName(), PATHINFO_FILENAME));
+                    $safeFilename = $slugger->slug($originalFilename);
+                    //$newFilename = $safeFilename .'-'.uniqid().'.'. $stlFile->guessExtension(); // It can't guess extension of stl
+                    $newFilename = $safeFilename .'-'.uniqid().'.'. 'stl';
+                    //try {
+                        $stlFile->move($stlDirectory, $newFilename); // written to folder
+                    //} catch (FileException $e) {}
+                    $file->setFilename($originalFilename);
+                    $file->setServerFilename($newFilename);
+
+                    $this->entityManager->persist($file); // write to DB
+                    $this->entityManager->flush();
+                }
+            }
+
+            /** @var UploadedFile $imgFiles */
+            $imgFiles = $form->get('images')->getData();
+            if($imgFiles) {
+                foreach ($imgFiles as $imgFile) {
+                    // Create Photo entity, write to DB, save to disc
+                    $photo = new Photo();
+                    $photo->setItem($item);
+                    $originalFilename = (pathinfo($imgFile->getClientOriginalName(), PATHINFO_FILENAME));
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename .'-'.uniqid().'.'. $imgFile->guessExtension();
+                    //try {
+                        $imgFile->move($imageDirectory, $newFilename); // write to folder
+                    //} catch (FileException $e) {}
+                    $photo->setPhotoname($originalFilename);
+                    $photo->setServerPhotoname($newFilename);
+
+                    $this->entityManager->persist($photo); // write to DB
+                    $this->entityManager->flush();
+                }
+            }
+            return $this->redirectToRoute('item_list', ['offset' => 0]); // TODO change later to redirect to user's item list
+        }
+
+        return new Response($this->twig->render('main/newitem.html.twig', [
+            'newItemForm' => $form->createView(),
+        ]));
     }
 }
