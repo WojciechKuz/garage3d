@@ -9,6 +9,7 @@ use App\Form\ItemForm;
 use App\Repository\FileRepository;
 use App\Repository\ItemRepository;
 use App\Repository\PhotoRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -31,9 +32,10 @@ final class MainController extends AbstractController
 {
     public function __construct(
         private Environment $twig,
+        private UserRepository $userRepository,
         private ItemRepository $itemRepository,
-        private FileRepository $fileRepository,
-        private PhotoRepository $photoRepository,
+        //private FileRepository $fileRepository,
+        //private PhotoRepository $photoRepository,
         private EntityManagerInterface $entityManager,
     ) {}
 
@@ -84,7 +86,6 @@ final class MainController extends AbstractController
 
         return new Response(
             $this->twig->render('main/list.html.twig', [
-                'controller_name' => 'MainController',
                 'items' => $paginatedItems,
                 'itemCount' => $itemCount,
                 'previous' => $offset - ItemRepository::PAGINATION_PAGE_SIZE,
@@ -93,6 +94,38 @@ final class MainController extends AbstractController
                 ),
                 'first' => 0,
                 'last' => $itemCount - ItemRepository::PAGINATION_PAGE_SIZE,
+            ])
+        );
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    #[Route('/item/{item_id}', name: 'item_page')] // TODO replace id in route parameter with slug
+    public function item(int $item_id): Response {
+
+        $selectedItem = $this->itemRepository->find($item_id);
+        return new Response(
+            $this->twig->render('main/item.html.twig', [
+                'item' => $selectedItem,
+            ])
+        );
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    #[Route('/user/{user_id}', name: 'user_page')] // TODO replace id in route parameter with slug
+    public function user(int $user_id): Response {
+
+        $selectedUser = $this->userRepository->find($user_id);
+        return new Response(
+            $this->twig->render('main/user.html.twig', [
+                'user' => $selectedUser,
             ])
         );
     }
@@ -163,7 +196,7 @@ final class MainController extends AbstractController
                     $this->entityManager->flush();
                 }
             }
-            return $this->redirectToRoute('item_list', ['offset' => 0]); // TODO change later to redirect to user's item list
+            return $this->redirectToRoute('item_list', ['offset' => 0]); // TODO change later to redirect to user's item list (or this item)
         }
 
         return new Response($this->twig->render('main/newitem.html.twig', [
