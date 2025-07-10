@@ -1,3 +1,5 @@
+✖✔❔
+
 ## Oddawanie projektów:
 
 Demonstracja projektu najpóźniej **do 16.07.2025r.** do godz 20.
@@ -7,7 +9,7 @@ Oddanie projektu po przekroczeniu terminu skutkuje otrzymaniem maksymalnej oceny
 Projekt ukończony przez studenta powinien być zgłoszony do prowadzącego poprzez kontakt mailowy (grzegorzo96@mat.umk.pl) w celu umówienia terminu zaliczenia projektu na platformie MSTeams.
 
 
-### Wymagania techniczne:
+### Wymagania techniczne: ✔
 
 - PHP 8.2 lub wyższy
 - Symfony 6.4
@@ -16,21 +18,21 @@ Projekt ukończony przez studenta powinien być zgłoszony do prowadzącego popr
 - GIT (projekt powinien być dostępny w repozytorium np. na GitHub)
   Zaliczenie przedmiotu:
 
-### Projekt powinien demonstrować:
+### Projekt powinien demonstrować: ❔
 - wykorzystanie PHP'a wraz zasadami SOLID
-- wykorzystanie Symfony oraz Dockera
+- wykorzystanie Symfony oraz Dockera ✔
 - pisanie czystego kodu
 - odpowiednią dokumentację (PHPDoc)
 - konwencję nazewnictwa i commitów w repozytorium
 
 ### Ocena dst.
 
-- projekt odpala się na serwerze lokalnym (z pełną konfiguracją w .env.example)
-- projekt posiada bazę danych z przynajmniej 6 tabelami (z polami odpowiedniego typu, relacjami min. 3 relacje między tabelami)
-- projekt umożliwia logowanie, dodawanie, edycję, usuwanie, wyświetlenie listy z obiektami (minimum 4 podstawowe operacje CRUD dla każdej głównej encji)
-- projekt oparty na silniku szablonów TWIG
-- architektura dowolna (polecam MVC na dobry początek, dla bardzo zaawansowanych może być DDD)
-- podstawowe README z instrukcją uruchomienia projektu
+- projekt odpala się na serwerze lokalnym✔ (z pełną konfiguracją w .env.example✔) ✔
+- projekt posiada bazę danych z przynajmniej 6 tabelami (z polami odpowiedniego typu, relacjami min. 3 relacje✔ między tabelami)
+- projekt umożliwia logowanie✔, dodawanie✔, edycję, usuwanie, wyświetlenie listy✔ z obiektami (minimum 4 podstawowe operacje CRUD dla każdej głównej encji)
+- projekt oparty na silniku szablonów TWIG  ✔
+- architektura dowolna (polecam MVC✔ na dobry początek, dla bardzo zaawansowanych może być DDD) ✔
+- podstawowe README z instrukcją uruchomienia projektu ✔
 
 ### Ocena dst.+
 

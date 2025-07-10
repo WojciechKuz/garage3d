@@ -1,4 +1,4 @@
-✖✔
+✖✔❔
 Allrighty, a więc MVC znaczy model-view-controller.
 W poprawnej kolejności to jest tak:
 - Model - dane, np. w bazie danych, oraz obliczenia (jeśli są potrzebne) logika biznesowa
@@ -16,7 +16,7 @@ Note: Każda encja zawiera już id, nie potrzeba ich dodawać
   - username    ✔ Unique identifier (displayed)
   - password    ✔
   - email       ✔
-  - about (description about user Like "Hi, i'm student interested in...") ✔
+  - about (description about user Like "Hi, I'm student interested in...") ✔
   maybe:
   - isMaker
   - region
@@ -36,16 +36,12 @@ Note: Każda encja zawiera już id, nie potrzeba ich dodawać
   - fid         ✔
   - item* (Item.iid) ✔
   - filename    ✔ (jako original)
-  - FILE/BLOB   ✖
-  Zamiast tego:
   - server_filename ✔
 
 4. Photo
   - pid         ✔
   - item* (Item.iid) ✔
   - photoname   ✔
-  - FILE/IMG    ✖
-  Zamiast tego:
   - server_photoname ✔
 
 5. LikedItems
@@ -61,23 +57,26 @@ nazwy pól: aBb? / a_bb? (SQL ignoruje case z tego co pamiętam, także Aa == aa
 
 
 ## Controller:
-1 albo 2 controllery (listing wydruków i strona przedmiotu)
-1.ItemController? MainController? ListingController?
-2.SiteController? ProjectController? ItemController?
 
 Ok, niech będzie:
 1. MainController
-2. ItemController (później)
+NIE 2. ItemController
 
 ## View:
 View? A jakoś tam posklejam. W zeszycie rozrysowane.
 
+TODO: Do zrobienia na 3 pozostało:
+-6 tabel (4/6)
+-możliwość edycji, usuwanie
+ operacje CRUD? (min 4 na encję)
+
+I dalej!
 
 Nieomawiawiane rzeczy, które będą mi potrzebne:
-- Pliki w bazie danych. Upload plików: https://symfony.com/doc/6.4/controller/upload_file.html
-- Obrazki w bazie danych
+- DONE Pliki w bazie danych. Upload plików: https://symfony.com/doc/6.4/controller/upload_file.html
+- DONE Obrazki w bazie danych. Tak samo.
 - Wyświetlanie Galerii
-- Przechowywanie haseł w bazie danych
+- DONE Przechowywanie haseł w bazie danych. OK
 - DONE Logowanie. Tu jest wszystko opisane jak skonfigurować: https://symfony.com/doc/6.4/security.html#the-user
 - Wyświetlanie 3D (później)
 
