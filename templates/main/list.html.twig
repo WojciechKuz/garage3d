@@ -21,16 +21,16 @@
         <table>
             <tr>
                 {% for item in items %}
-                <td>
-                    <div>
-                        <h4>{{ item.itemName }}</h4>
-                        <p>by {{ item.author.username }}</p>
-                    </div>
-                </td>
-                {% if loop.index0 % rowWidth == rowWidth - 1 %}
-                </tr>
-                <tr>
-                {% endif %}
+                    <td>
+                        <a href="{{ path('item_page', { item_id: item.id }) }}" class="no-color-link">
+                            <h4>{{ item.itemName }}</h4>
+                            <p>by <a href="{{ path('user_page', { user_id: item.author.id }) }}" class="no-color-link">{{ item.author.username }}</a></p>
+                        </a>
+                    </td>
+                    {% if loop.index0 % rowWidth == rowWidth - 1 %}
+                        </tr>
+                        <tr>
+                    {% endif %}
                 {% endfor %}
             </tr>
         </table>
