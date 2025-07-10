@@ -21,6 +21,7 @@ można je było łatwo usunąć.-->
 Uruchamianie:
 
 1. będąc w głównym katalogu projektu...
-2. Uruchomić kontener Dockera `docker compose up`. Gdy już istnieje można uruchamiać kontener "garage3d" przez Docker Desktop.
-3. Uruchomić serwer symfony `symfony console server:start`
-4. Teraz można otworzyć stronę [localhost](http://localhost:8000/) w przeglądarce.
+2. Proszę się upewnić, że katalog public zawiera katalog uploads/images oraz uploads/stl. Jeśli ich nie ma, utworzyć.
+3. Uruchomić kontener Dockera `docker compose up`. Gdy już istnieje można uruchamiać kontener "garage3d" przez Docker Desktop.
+4. Uruchomić serwer symfony `symfony console server:start`
+5. Teraz można otworzyć stronę [localhost](http://localhost:8000/) w przeglądarce.
