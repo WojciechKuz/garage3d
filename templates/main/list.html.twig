@@ -6,12 +6,11 @@
     <style>
         .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
         .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-        td, th {
+        td, th, hr {
             border: 1px solid grey;
         }
         /* font-family: 'Roboto Light',system-ui" */
     </style>
-    {% set rowWidth = 3 %}
     <h1>Garage3D 🛠🧰🖨</h1>
     <h2>Browse out of {{ itemCount }} items</h2>
     {% if not is_granted('ROLE_USER') %}
@@ -23,6 +22,16 @@
                 {% for item in items %}
                     <td>
                         <a href="{{ path('item_page', { item_id: item.id }) }}" class="no-color-link">
+                            {% if item.photos|length > 0 %}
+                            <img
+                                    src="{{ asset('/uploads/images/' ~ item.photos[0].serverPhotoname) }}"
+                                    alt="{{ item.photos[0].photoname }}"
+                                    style="width: 300px; height: 225px;"
+                            />
+                            {% else %}
+                                <div style="background-color: #b5daff; width: 300px; height: 225px;"></div>
+                            {% endif %}
+                            <hr style="margin: 0; border-bottom: 0">
                             <h4>{{ item.itemName }}</h4>
                             <p>by <a href="{{ path('user_page', { user_id: item.author.id }) }}" class="no-color-link">{{ item.author.username }}</a></p>
                         </a>

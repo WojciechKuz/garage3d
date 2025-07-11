@@ -17,7 +17,8 @@
         {% endblock %}
     </head>
     <body style="margin: 0">
-    <div style="width: 100%; position: sticky; top: 0; left: 0; right: 0; background-color: #93c5fd; padding: 8px; margin: 0; overflow: hidden; box-sizing: border-box">
+    {% set rowWidth = 3 %}
+    <div style="width: 100%; position: sticky; top: 0; left: 0; right: 0; background-color: #7fbbfd; padding: 8px; margin: 0; overflow: hidden; box-sizing: border-box">
         <span style="float: right">
             {% if is_granted('ROLE_USER') %}
                 <span >Hello, {{ app.user.username }}!</span> <!-- zalogowano jako... -->

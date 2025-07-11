@@ -10,7 +10,80 @@
             border: 1px solid grey;
         }
         /* font-family: 'Roboto Light',system-ui" */
+        /* https://www.w3schools.com/howto/howto_js_slideshow_gallery.asp */
+        * {
+            box-sizing: border-box;
+        }
+        .gallery-class {
+            border: 2px solid grey;
+            display: inline-flex;
+            align-items: center; /* align vertically */
+        }
+        .gallery-item {
+            min-width: 500px;
+            max-width: 800px;
+            display: flex;
+            flex-shrink: 1;
+        }
+        .inactive-gallery-item {
+            display: none;
+        }
+        .prev, .next {
+            cursor: pointer;
+            padding: 16px;
+            color: black;
+            font-weight: bold;
+            font-size: 20px;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .next {
+            border-radius: 3px 0 0 3px;
+        }
+        .prev:hover, .next:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
     </style>
+    <script>
+        let slideIndex = 0;
+        let whichImg = null;
+
+        // Next/previous image
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            let visibleSlides = document.getElementsByClassName("gallery-item");
+            if(visibleSlides.length > 0) {
+                let element = visibleSlides[0];
+                element.classList.remove("gallery-item");
+                element.classList.add("inactive-gallery-item");
+            }
+
+            let slides = document.getElementsByClassName("inactive-gallery-item");
+            let slidesSize = slides.length // length is property
+
+            if (n >= slides.length) {slideIndex = 0;}
+            if (n < 0) {slideIndex = slides.length-1;}
+
+            for (let i = 0; i < slides.length; i++) {
+                if(slides[i].id === slideIndex.toString(10)) {
+                    let element = slides[i]
+                    element.classList.remove("inactive-gallery-item");
+                    element.classList.add("gallery-item");
+                    whichImg.innerHTML = "Image " + (i+1).toString(10) + " out of " + slidesSize.toString(10)
+                    return;
+                }
+            }
+            console.error("No slides elements with slideIndex id")
+        }
+    </script>
 
     <div class="example-wrapper">
         <h1>Garage3D 🛠🧰🖨</h1>
@@ -25,17 +98,44 @@
                 by <a href="{{ path('user_page', { user_id: item.author.id }) }}" class="no-color-link">{{ item.author.username }}</a>
             </h4>
             <br/>
+            <div>
+                {% if item.photos|length > 0 %}
+                    <div id="gallery" class="gallery-class">
+                        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                        {% for photo in item.photos %}
+                            <img
+                                    id="{{ loop.index0 }}"
+                                    src="{{ asset('/uploads/images/' ~ photo.serverPhotoname) }}"
+                                    alt="{{ photo.photoname }}"
+                                    class="inactive-gallery-item"
+                            />
+                        {% endfor %}
+                        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+                    </div>
+                    <p id="which_img"></p>
+                    <script>
+                        whichImg = document.getElementById("which_img");
+                        showSlides(slideIndex);
+                    </script>
+                {% endif %}
+            </div>
+            <br/>
             <p>{{ item.description }}</p>
             <br/>
             Files:
             <ul>
             {% for file in item.files %}
                 <li>
-                    <a href="{{ asset('/uploads/stl/' ~ file.serverFilename) }}">{{ file.filename }}</a>
+                    <a href="{{ asset('/uploads/stl/' ~ file.serverFilename) }}">
+                        {{ file.filename }}{% if not (file.filename ends with '.stl') %}.stl{% endif %}
+                    </a>
                 </li>
             {% endfor %}
             </ul>
         {% endif %}
     </div>
+    <br/>
+    <a href="{{ path('app_main') }}">back to title page</a>
+    <br/>
     <p></p>
 {% endblock %}

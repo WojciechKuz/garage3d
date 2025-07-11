@@ -29,13 +29,34 @@
             {/% endif %}-->
             <br/>
             Items created by {{ user.username }}:
-            <ul>
-                {% for item in user.items %}
-                    <li>
-                        <a href="{{ path('item_page', { item_id: item.id }) }}" class="no-color-link">{{ item.itemName }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
+            <div style="margin-top: 16px">
+                <table>
+                    <tr>
+                        {% for item in user.items %}
+                        <td>
+                            <a href="{{ path('item_page', { item_id: item.id }) }}" class="no-color-link">
+                                {% if item.photos|length > 0 %}
+                                    <img
+                                            src="{{ asset('/uploads/images/' ~ item.photos[0].serverPhotoname) }}"
+                                            alt="{{ item.photos[0].photoname }}"
+                                            style="width: 300px; height: 225px;"
+                                    />
+                                {% else %}
+                                    <div style="background-color: #afd4ff; width: 300px; height: 225px;"></div>
+                                {% endif %}
+                                <hr style="margin: 0; border-bottom: 0">
+                                <h4>{{ item.itemName }}</h4>
+                                <p>by <a href="{{ path('user_page', { user_id: item.author.id }) }}" class="no-color-link">{{ item.author.username }}</a></p>
+                            </a>
+                        </td>
+                        {% if loop.index0 % rowWidth == rowWidth - 1 %}
+                    </tr>
+                    <tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                </table>
+            </div> <!-- I don't think one user would have so many items that it needs pagination -->
         {% endif %}
         <br/>
         <a href="{{ path('app_main') }}">back to title page</a>

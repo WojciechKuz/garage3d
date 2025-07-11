@@ -77,7 +77,7 @@ I dalej!
 Nieomawiawiane rzeczy, które będą mi potrzebne:
 - DONE Pliki w bazie danych. Upload plików: https://symfony.com/doc/6.4/controller/upload_file.html
 - DONE Obrazki w bazie danych. Tak samo.
-- Wyświetlanie Galerii
+- DONE Wyświetlanie Galerii
 - DONE Przechowywanie haseł w bazie danych. OK
 - DONE Logowanie. Tu jest wszystko opisane jak skonfigurować: https://symfony.com/doc/6.4/security.html#the-user
 - Wyświetlanie 3D (później)
@@ -86,7 +86,10 @@ FIXME favicon.png się nie wyświetla :(
 
 FIXME pliki pobierają się z nazwą serwerową pliku, z dopisanym uniqueId, a nie oryginalną nazwą
 
-Dodać przycisk pobierz wszystko? (wszystkie stl danego przedmiotu)
+Możliwe usprawnienia:
+- Dodać przycisk pobierz wszystko? (wszystkie stl danego przedmiotu)
+- Zamiast tabeli przedmiotów można użyć flexbox. Gdy się nie mieszczą w wierszu,
+  przeskakują do następnego.
 
 W php.ini włączyłem rozszerzenie fileinfo,
 post_max_size = 32M (z 8 na 32)
