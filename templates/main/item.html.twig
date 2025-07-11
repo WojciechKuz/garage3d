@@ -30,7 +30,9 @@
             Files:
             <ul>
             {% for file in item.files %}
-                <li>{{ file.filename }}</li>
+                <li>
+                    <a href="{{ asset('/uploads/stl/' ~ file.serverFilename) }}">{{ file.filename }}</a>
+                </li>
             {% endfor %}
             </ul>
         {% endif %}

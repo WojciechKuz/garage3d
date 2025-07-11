@@ -65,10 +65,12 @@ NIE 2. ItemController
 ## View:
 View? A jakoś tam posklejam. W zeszycie rozrysowane.
 
+- DONE załączniki do pobrania
+
 TODO: Do zrobienia na 3 pozostało:
--6 tabel (4/6)
 -możliwość edycji, usuwanie
  operacje CRUD? (min 4 na encję)
+-6 tabel (4/6)
 
 I dalej!
 
@@ -82,6 +84,9 @@ Nieomawiawiane rzeczy, które będą mi potrzebne:
 
 FIXME favicon.png się nie wyświetla :(
 
+FIXME pliki pobierają się z nazwą serwerową pliku, z dopisanym uniqueId, a nie oryginalną nazwą
+
+Dodać przycisk pobierz wszystko? (wszystkie stl danego przedmiotu)
 
 W php.ini włączyłem rozszerzenie fileinfo,
 post_max_size = 32M (z 8 na 32)
