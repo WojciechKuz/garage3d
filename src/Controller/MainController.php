@@ -113,7 +113,7 @@ final class MainController extends AbstractController
         $selectedItem = $this->itemRepository->find($item_id);
         $form = $this->handleForm($request, $selectedItem);
         if ($form->isSubmitted() && $form->isValid()) {
-            return $this->redirectToRoute('item', ['item_id' => $item_id]);
+            return $this->redirectToRoute('item_page', ['item_id' => $item_id]);
         }
 
         return new Response(
@@ -152,7 +152,7 @@ final class MainController extends AbstractController
         $item = new Item();
         $form = $this->handleForm($request, $item);
         if ($form->isSubmitted() && $form->isValid()) {
-            return $this->redirectToRoute('item_list', ['offset' => 0]); // TODO change later to redirect to this item
+            return $this->redirectToRoute('item_page', ['item_id' => $item->getId()]);
         }
 
         return new Response($this->twig->render('main/newitem.html.twig', [
@@ -178,7 +178,7 @@ final class MainController extends AbstractController
         $file = $this->fileRepository->find($file_id);
         $this->entityManager->remove($file);
         $this->entityManager->flush();
-        return $this->redirectToRoute('item', ['item_id' => $back_to]);
+        return $this->redirectToRoute('item_page', ['item_id' => $back_to]);
     }
 
     #[Route('/deletephoto/{photo_id}/{back_to}', name: 'delete_photo')]
@@ -189,7 +189,7 @@ final class MainController extends AbstractController
         $photo = $this->photoRepository->find($photo_id);
         $this->entityManager->remove($photo);
         $this->entityManager->flush();
-        return $this->redirectToRoute('item', ['item_id' => $back_to]);
+        return $this->redirectToRoute('item_page', ['item_id' => $back_to]);
     }
 
     /** For passed Item (it may be new) creates a form, and */
