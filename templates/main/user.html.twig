@@ -59,8 +59,13 @@
             </div> <!-- I don't think one user would have so many items that it needs pagination -->
         {% endif %}
         <br/>
-        <a href="{{ path('app_main') }}">back to title page</a>
-        <br/>
+        <div>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('add_item') }}">Add new item</a>
+            {% endif %}
+            <br/>
+            <a href="{{ path('app_main') }}">back to title page</a>
+        </div>
     </div>
     <p></p>
 {% endblock %}

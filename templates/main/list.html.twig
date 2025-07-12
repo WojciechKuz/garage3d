@@ -12,7 +12,7 @@
         /* font-family: 'Roboto Light',system-ui" */
     </style>
     <h1>Garage3D 🛠🧰🖨</h1>
-    <h2>Browse out of {{ itemCount }} items</h2>
+    <h2>Browse out of {{ itemCount }} items to 3D print</h2>
     {% if not is_granted('ROLE_USER') %}
         Log in to post your own creations!
     {% endif %}
@@ -60,9 +60,9 @@
     </div>
     <div>
         {% if is_granted('ROLE_USER') %}
-            <!--TODO Here will be placed a button to add your items-->
-            <a href="{{ path('add_item') }}">Add your item</a> <!-- No form yet, redirects to home -->
+            <a href="{{ path('add_item') }}">Add your item</a>
         {% endif %}
-
+        <br/>
+        <a href="{{ path('app_main') }}">back to title page</a>
     </div>
 {% endblock %}

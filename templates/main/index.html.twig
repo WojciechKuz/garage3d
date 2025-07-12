@@ -19,6 +19,10 @@
 
     <div style="margin: 1em auto; max-width: 800px; width: 90%"> <!-- I experienced the pain of centering a div. -->
         <a href="{{ path('item_list', { offset: 0 }) }}">Browse {{ itemCount }} items</a>
+        <br/>
+        {% if is_granted('ROLE_USER') %}
+            <a href="{{ path('add_item') }}">Add new item</a>
+        {% endif %}
     </div>
 <p></p>
 {% endblock %}
