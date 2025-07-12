@@ -9,6 +9,16 @@
                 color: inherit;
                 text-decoration: none;
             }
+            input {
+                margin-left: 8px;
+                min-width: 300px;
+            }
+            textarea {
+                box-sizing: content-box;
+                margin-left: 8px;
+                min-width: 300px;
+                min-height: 100px;
+            }
         </style>
         {% block stylesheets %}
         {% endblock %}
@@ -21,7 +31,9 @@
     <div style="width: 100%; position: sticky; top: 0; left: 0; right: 0; background-color: #7fbbfd; padding: 8px; margin: 0; overflow: hidden; box-sizing: border-box">
         <span style="float: right">
             {% if is_granted('ROLE_USER') %}
-                <span >Hello, {{ app.user.username }}!</span> <!-- zalogowano jako... -->
+                <span>
+                    Hello, <a href="{{ path('user_page', { user_id: app.user.id }) }}" class="no-color-link">{{ app.user.username }}</a>!
+                </span> <!-- zalogowano jako... -->
                 <span style="padding-left: 20px"></span>
                 <a href="{{ path('app_logout') }}" style="text-decoration: none">log out</a>
             {% else %}

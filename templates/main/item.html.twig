@@ -6,13 +6,17 @@
     <style>
         .example-wrapper { margin: 1em auto; max-width: 800px; width: 90%; font: 18px/1.5 sans-serif; }
         .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-        td, th {
-            border: 1px solid grey;
-        }
         /* font-family: 'Roboto Light',system-ui" */
         /* https://www.w3schools.com/howto/howto_js_slideshow_gallery.asp */
         * {
             box-sizing: border-box;
+        }
+        .shy-link {
+            margin-left: 8px;
+            color: grey;
+        }
+        .shy-link:hover {
+            color: darkred;
         }
         .gallery-class {
             border: 2px solid grey;
@@ -97,6 +101,35 @@
             <h4>
                 by <a href="{{ path('user_page', { user_id: item.author.id }) }}" class="no-color-link">{{ item.author.username }}</a>
             </h4>
+            {% if is_granted('ROLE_USER') and item.author.id == app.user.id %}
+                <details>
+                    <summary>Edit Item</summary>
+                    {{ form(editForm) }}
+                    <br/>
+                    <div>
+                        Files that are already part of this project:
+                        <br/>
+                        <table>
+                            {% for file in item.files %}
+                                <tr>
+                                    <td>{{ file.filename }}</td>
+                                    <td><a href="{{ path('delete_file', {file_id: file.id, back_to: item.id}) }}" class="shy-link">Delete</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        <br/>
+                        Images already in project:
+                        <table>
+                            {% for photo in item.photos %}
+                                <tr>
+                                    <td>{{ photo.photoname }}</td>
+                                    <td><a href="{{ path('delete_photo', {photo_id: photo.id, back_to: item.id}) }}" class="shy-link">Delete</a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </details>
+            {% endif %}
             <br/>
             <div>
                 {% if item.photos|length > 0 %}
@@ -135,7 +168,12 @@
         {% endif %}
     </div>
     <br/>
-    <a href="{{ path('app_main') }}">back to title page</a>
-    <br/>
+    <div>
+        {% if is_granted('ROLE_USER') %}
+            <a href="{{ path('add_item') }}">Add new item</a>
+        {% endif %}
+        <br/>
+        <a href="{{ path('app_main') }}">back to title page</a>
+    </div>
     <p></p>
 {% endblock %}

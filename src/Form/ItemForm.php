@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\All;
@@ -21,7 +22,7 @@ class ItemForm extends AbstractType
         $builder
             ->add('itemName')
             ->add('files', FileType::class, [
-                'label' => 'Stl files that are part of this item project',
+                'label' => 'Add stl files that are part of this item project',
                 'mapped' => false,
                 'multiple' => true,
                 'constraints' => [
@@ -38,9 +39,9 @@ class ItemForm extends AbstractType
                     ]),
                 ],
             ])
-            ->add('description')
+            ->add('description', TextareaType::class)
             ->add('images', FileType::class, [
-                'label' => 'Images of your item',
+                'label' => 'Add images of your item',
                 'mapped' => false,
                 'multiple' => true,
                 'constraints' => [

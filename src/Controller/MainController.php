@@ -13,6 +13,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,9 +35,12 @@ final class MainController extends AbstractController
         private Environment $twig,
         private UserRepository $userRepository,
         private ItemRepository $itemRepository,
-        //private FileRepository $fileRepository,
-        //private PhotoRepository $photoRepository,
+        private FileRepository $fileRepository,
+        private PhotoRepository $photoRepository,
         private EntityManagerInterface $entityManager,
+        private SluggerInterface $slugger,
+        #[Autowire('%kernel.project_dir%/public/uploads/stl')] private string $stlDirectory,
+        #[Autowire('%kernel.project_dir%/public/uploads/images')] private string $imageDirectory
     ) {}
 
     /**
@@ -49,11 +53,13 @@ final class MainController extends AbstractController
     {
         $itemCount = $this->itemRepository->count(); // repository.count() instead of php's default count(array), which counts recursively
 
+        // "main" site will soon be removed
         return new Response(
             $this->twig->render('main/index.html.twig', [
                 'itemCount' => $itemCount,
             ])
         );
+        //return $this->redirectToRoute('item_list', ['offset' => 0]);
     }
 
     /**
@@ -79,10 +85,8 @@ final class MainController extends AbstractController
     #[Route('/browse/{offset}', name: 'item_list')]
     public function items(int $offset): Response // why Request does not work?
     {
-        //$offset = max(0, $request->query->getInt('offset', -1));
         $paginatedItems = $this->itemRepository->getItemPaginator($offset);
         $itemCount = $this->itemRepository->count(); // all elements
-        //$itemCount = count($paginatedItems);
 
         return new Response(
             $this->twig->render('main/list.html.twig', [
@@ -104,12 +108,18 @@ final class MainController extends AbstractController
      * @throws LoaderError
      */
     #[Route('/item/{item_id}', name: 'item_page')] // TODO replace id in route parameter with slug
-    public function item(int $item_id): Response {
+    public function item(Request $request, int $item_id): Response {
 
         $selectedItem = $this->itemRepository->find($item_id);
+        $form = $this->handleForm($request, $selectedItem);
+        if ($form->isSubmitted() && $form->isValid()) {
+            return $this->redirectToRoute('item', ['item_id' => $item_id]);
+        }
+
         return new Response(
             $this->twig->render('main/item.html.twig', [
                 'item' => $selectedItem,
+                'editForm' => $form->createView(),
             ])
         );
     }
@@ -137,16 +147,58 @@ final class MainController extends AbstractController
      */
     #[Route('/additem', name: 'add_item')]
     public function addItem(
-        Request $request, SluggerInterface $slugger,
-        #[Autowire('%kernel.project_dir%/public/uploads/stl')] string $stlDirectory,
-        #[Autowire('%kernel.project_dir%/public/uploads/images')] string $imageDirectory
+        Request $request,
     ): Response {
         $item = new Item();
+        $form = $this->handleForm($request, $item);
+        if ($form->isSubmitted() && $form->isValid()) {
+            return $this->redirectToRoute('item_list', ['offset' => 0]); // TODO change later to redirect to this item
+        }
+
+        return new Response($this->twig->render('main/newitem.html.twig', [
+            'newItemForm' => $form->createView(),
+        ]));
+    }
+
+    #[Route('/deleteitem/{item_id}', name: 'delete_item')]
+    public function deleteItem(int $item_id): Response {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $item = $this->itemRepository->find($item_id);
+        $this->entityManager->remove($item);
+        $this->entityManager->flush();
+        return $this->redirectToRoute('item_list', ['offset' => 0]);
+    }
+
+    #[Route('/deletefile/{file_id}/{back_to}', name: 'delete_file')]
+    public function deleteFile(int $file_id, int $back_to): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $file = $this->fileRepository->find($file_id);
+        $this->entityManager->remove($file);
+        $this->entityManager->flush();
+        return $this->redirectToRoute('item', ['item_id' => $back_to]);
+    }
+
+    #[Route('/deletephoto/{photo_id}/{back_to}', name: 'delete_photo')]
+    public function deletePhoto(int $photo_id, int $back_to): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $photo = $this->photoRepository->find($photo_id);
+        $this->entityManager->remove($photo);
+        $this->entityManager->flush();
+        return $this->redirectToRoute('item', ['item_id' => $back_to]);
+    }
+
+    /** For passed Item (it may be new) creates a form, and */
+    public function handleForm(
+        Request $request, Item $item
+    ): FormInterface
+    {
         $form = $this->createForm(ItemForm::class, $item);
         $form->handleRequest($request);
-
-        //$item->setItemName($form->get('itemName')->getData());
-        //$item->setDescription($form->get('description')->getData());
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -162,13 +214,17 @@ final class MainController extends AbstractController
                     $file = new File();
                     $file->setItem($item);
                     $originalFilename = (pathinfo($stlFile->getClientOriginalName(), PATHINFO_FILENAME));
-                    $safeFilename = $slugger->slug($originalFilename);
+                    $safeFilename = $this->slugger->slug($originalFilename);
                     //$newFilename = $safeFilename .'-'.uniqid().'.'. $stlFile->guessExtension(); // It can't guess extension of stl
                     $newFilename = $safeFilename .'-'.uniqid().'.'. 'stl';
                     //try {
-                        $stlFile->move($stlDirectory, $newFilename); // written to folder
+                    $stlFile->move($this->stlDirectory, $newFilename); // written to folder
                     //} catch (FileException $e) {}
-                    $file->setFilename($originalFilename);
+                    if(str_ends_with($originalFilename, '.stl')) {
+                        $file->setFilename($originalFilename);
+                    } else {
+                        $file->setFilename($originalFilename.'.stl');
+                    }
                     $file->setServerFilename($newFilename);
 
                     $this->entityManager->persist($file); // write to DB
@@ -184,10 +240,10 @@ final class MainController extends AbstractController
                     $photo = new Photo();
                     $photo->setItem($item);
                     $originalFilename = (pathinfo($imgFile->getClientOriginalName(), PATHINFO_FILENAME));
-                    $safeFilename = $slugger->slug($originalFilename);
+                    $safeFilename = $this->slugger->slug($originalFilename);
                     $newFilename = $safeFilename .'-'.uniqid().'.'. $imgFile->guessExtension();
                     //try {
-                        $imgFile->move($imageDirectory, $newFilename); // write to folder
+                    $imgFile->move($this->imageDirectory, $newFilename); // write to folder
                     //} catch (FileException $e) {}
                     $photo->setPhotoname($originalFilename);
                     $photo->setServerPhotoname($newFilename);
@@ -196,11 +252,7 @@ final class MainController extends AbstractController
                     $this->entityManager->flush();
                 }
             }
-            return $this->redirectToRoute('item_list', ['offset' => 0]); // TODO change later to redirect to user's item list (or this item)
         }
-
-        return new Response($this->twig->render('main/newitem.html.twig', [
-            'newItemForm' => $form->createView(),
-        ]));
+        return $form;
     }
 }
