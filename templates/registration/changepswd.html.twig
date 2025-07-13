@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <style>
+        input {
+            margin-left: 8px;
+        }
+    </style>
+    <div style="margin: 8px">
+        <h2>Register</h2>
+        <p style="color: darkred">{{ status }}</p>
+        {{ form_errors(changepswdForm) }}
+
+        {{ form_start(changepswdForm) }}
+        <!--{/{ form_row(changepswdForm.username) }}-->
+        {{ form_row(changepswdForm.oldPlainPassword, {
+            label: 'Old password'
+        }) }}
+        {{ form_row(changepswdForm.newPlainPassword, {
+            label: 'New password'
+        }) }}
+        {{ form_row(changepswdForm.email) }}
+
+        {{ form_end(changepswdForm) }}
+    </div>
+
+
+{% endblock %}
