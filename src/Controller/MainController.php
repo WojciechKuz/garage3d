@@ -44,23 +44,10 @@ final class MainController extends AbstractController
         #[Autowire('%kernel.project_dir%/public/uploads/images')] private string $imageDirectory
     ) {}
 
-    /**
-     * @throws SyntaxError
-     * @throws RuntimeError
-     * @throws LoaderError
-     */
     #[Route('/', name: 'app_main')]
     public function index(): Response
     {
-        $itemCount = $this->itemRepository->count(); // repository.count() instead of php's default count(array), which counts recursively
-
-        // "main" site will soon be removed
-        return new Response(
-            $this->twig->render('main/index.html.twig', [
-                'itemCount' => $itemCount,
-            ])
-        );
-        //return $this->redirectToRoute('item_list', ['offset' => 0]);
+        return $this->redirectToRoute('item_list', ['offset' => 0]);
     }
 
     /**
