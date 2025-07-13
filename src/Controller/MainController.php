@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\File;
 use App\Entity\Item;
 use App\Entity\Likes;
 use App\Entity\Photo;
 use App\Entity\User;
+use App\Form\CommentForm;
 use App\Form\EditAboutForm;
 use App\Form\ItemForm;
+use App\Repository\CommentRepository;
 use App\Repository\FileRepository;
 use App\Repository\ItemRepository;
 use App\Repository\LikesRepository;
@@ -43,6 +46,7 @@ final class MainController extends AbstractController
         private FileRepository $fileRepository,
         private PhotoRepository $photoRepository,
         private LikesRepository $likesRepository,
+        private CommentRepository $commentRepository,
         private EntityManagerInterface $entityManager,
         private SluggerInterface $slugger,
         #[Autowire('%kernel.project_dir%/public/uploads/stl')] private string $stlDirectory,
@@ -132,24 +136,42 @@ final class MainController extends AbstractController
      */
     #[Route('/item/{item_id}', name: 'item_page')]
     public function item(Request $request, int $item_id): Response {
-
         $selectedItem = $this->itemRepository->find($item_id);
-        $form = $this->handleForm($request, $selectedItem);
-        if ($form->isSubmitted() && $form->isValid()) {
-            return $this->redirectToRoute('item_page', ['item_id' => $item_id]);
-        }
+
         $loggedInUser = $this->getUser();
         $isLiked = 0;
         if($loggedInUser != null) {
             $isLiked = $this->likesRepository->checkIsLiked($loggedInUser->getId(), $selectedItem->getId());
         }
 
+        // edit form
+        $editForm = $this->handleItemForm($request, $selectedItem);
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            return $this->redirectToRoute('item_page', ['item_id' => $item_id]);
+        }
+
+        // comment form
+        $comment = new Comment();
+        $commentForm = $this->createForm(CommentForm::class, $comment);
+        $commentForm->handleRequest($request);
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $comment->setAuthor($loggedInUser);
+            $comment->setItem($selectedItem);
+            $this->entityManager->persist($comment);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('item_page', ['item_id' => $item_id]);
+        }
+
+
         return new Response(
             $this->twig->render('main/item.html.twig', [
                 'item' => $selectedItem,
-                'editForm' => $form->createView(),
+                'editForm' => $editForm->createView(),
                 'likeCount' => $this->likesRepository->countLikesForItem($selectedItem->getId()),
                 'isLiked' => $isLiked,
+                'comments' => $this->commentRepository->findByItem($item_id),
+                'commentForm' => $commentForm->createView(),
             ])
         );
     }
@@ -190,7 +212,7 @@ final class MainController extends AbstractController
         Request $request,
     ): Response {
         $item = new Item();
-        $form = $this->handleForm($request, $item);
+        $form = $this->handleItemForm($request, $item);
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->redirectToRoute('item_page', ['item_id' => $item->getId()]);
         }
@@ -233,7 +255,7 @@ final class MainController extends AbstractController
     }
 
     /** For passed Item (it may be new) creates a form, submits data to database, adds files */
-    private function handleForm(
+    private function handleItemForm(
         Request $request, Item $item
     ): FormInterface
     {

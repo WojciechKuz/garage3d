@@ -36,10 +36,17 @@ class Item
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'item', orphanRemoval: true)]
     private Collection $photos;
 
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'item')]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
         $this->photos = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function __toString()
@@ -142,6 +149,36 @@ class Item
             // set the owning side to null (unless already changed)
             if ($photo->getItem() === $this) {
                 $photo->setItem(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setItem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getItem() === $this) {
+                $comment->setItem(null);
             }
         }
 

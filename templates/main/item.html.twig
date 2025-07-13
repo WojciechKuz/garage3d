@@ -195,6 +195,23 @@
             </ul>
         {% endif %}
     </div>
+    <div>
+        Comments:<br/>
+        {% if is_granted('ROLE_USER') %}
+            {{ form(commentForm) }}
+        {% else %}
+            Log in to post your comment
+        {% endif %}
+        <br>
+        {% if comments|length > 0 %}
+            {% for comment in comments %}
+                <h4>{{ comment.author.username }}</h4>
+                <p>{{ comment.comment }}</p>
+            {% endfor %}
+        {% else %}
+            <p>{{ 'No comments yet' }}</p>
+        {% endif %}
+    </div>
     <br/>
     <div>
         {% if is_granted('ROLE_USER') %}
