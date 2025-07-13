@@ -29,6 +29,11 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
+/**
+ * Item controller controls parsing of item.html.twig and newitem.html.twig.
+ * Also, handles ItemForm (adding and editing of item), commentForm.
+ * Has actions to like item and remove like from item, delete stl file, photo and whole item.
+ */
 final class ItemController extends AbstractController
 {
     public function __construct(
@@ -45,6 +50,7 @@ final class ItemController extends AbstractController
     ) {}
 
     /**
+     * Like or remove like from item.
      * @throws Exception
      */
     #[Route('/like/{item_id}', name: 'like')]
@@ -75,6 +81,8 @@ final class ItemController extends AbstractController
     }
 
     /**
+     * Show Item with photo gallery, likes, comments and files.
+     * Handles ItemForm (editing) and CommentForm.
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
@@ -122,6 +130,7 @@ final class ItemController extends AbstractController
     }
 
     /**
+     * Show page with form to add new item.
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
@@ -141,6 +150,9 @@ final class ItemController extends AbstractController
         ]));
     }
 
+    /**
+     * Action of deleting whole item.
+     */
     #[Route('/deleteitem/{item_id}', name: 'delete_item')]
     public function deleteItem(int $item_id): Response {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -151,6 +163,7 @@ final class ItemController extends AbstractController
         return $this->redirectToRoute('item_list', ['offset' => 0]);
     }
 
+    /** Delete file action */
     #[Route('/deletefile/{file_id}/{back_to}', name: 'delete_file')]
     public function deleteFile(int $file_id, int $back_to): Response
     {
@@ -162,6 +175,7 @@ final class ItemController extends AbstractController
         return $this->redirectToRoute('item_page', ['item_id' => $back_to]);
     }
 
+    /** Delete photo action */
     #[Route('/deletephoto/{photo_id}/{back_to}', name: 'delete_photo')]
     public function deletePhoto(int $photo_id, int $back_to): Response
     {

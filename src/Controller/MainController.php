@@ -31,6 +31,7 @@ final class MainController extends AbstractController
     }
 
     /**
+     * Show login page.
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
@@ -46,6 +47,9 @@ final class MainController extends AbstractController
     }
 
     /**
+     * Serve a page listing items (in table).
+     * It is main page of this website.
+     * @param int $offset controls, which page of items is displayed.
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
@@ -71,6 +75,8 @@ final class MainController extends AbstractController
     }
 
     /**
+     * Show user page. Here, visitors can read something about the user and see his/her projects.
+     * If it's page of a logged-in user he/she can edit description about themselves (via form).
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError

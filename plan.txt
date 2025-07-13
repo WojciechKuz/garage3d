@@ -44,16 +44,14 @@ Note: Każda encja zawiera już id, nie potrzeba ich dodawać
   - photoname   ✔
   - server_photoname ✔
 
-5. LikedItems
-  - user* (User.uid)
-  - likedItem* (Item.iid)
+5. LikedItems ✔
+  - whoLikes* (User.uid) ✔ (user is reserved word)
+  - likedItem* (Item.iid) ✔
 
-6. Comment
-  - item* (Item.iid)
-  - user* (User.uid)
-  - comment
-
-nazwy pól: aBb? / a_bb? (SQL ignoruje case z tego co pamiętam, także Aa == aa)
+6. Comment ✔
+  - item* (Item.iid) ✔
+  - user* (User.uid) ✔
+  - comment ✔
 
 
 ## Controller:
@@ -65,12 +63,11 @@ NIE 2. ItemController
 ## View:
 View? A jakoś tam posklejam. W zeszycie rozrysowane.
 
+Wymagania na 3:
 - DONE załączniki do pobrania
-
-TODO: Do zrobienia na 3 pozostało:
--możliwość edycji, usuwanie
- operacje CRUD? (min 4 na encję)
--6 tabel (4/6)
+- DONE możliwość edycji ✔, usuwanie ✔
+  operacje CRUD? (min 4 na encję) ✔
+- DONE 6 tabel (6/6)
 
 I dalej!
 
@@ -86,14 +83,18 @@ FIXME favicon.png się nie wyświetla :(
 
 FIXME pliki pobierają się z nazwą serwerową pliku, z dopisanym uniqueId, a nie oryginalną nazwą
 
+FIXME in /api: 500, internal server error: "description": "Session was used while the request was declared stateless."
+
 Możliwe usprawnienia:
 - Dodać przycisk pobierz wszystko? (wszystkie stl danego przedmiotu)
 - Zamiast tabeli przedmiotów można użyć flexbox. Gdy się nie mieszczą w wierszu,
   przeskakują do następnego.
+- Póki co nazwa użytkownika może się powtarzać?
+- Lepsza zmiana hasła. Albo przez stworzenie całkiem nowego użytkownika, albo reset hasła mailem?
 
 W php.ini włączyłem rozszerzenie fileinfo,
-post_max_size = 32M (z 8 na 32)
-i zmieniłem upload_max_filesize = 16M (z 2 na 16).
+post_max_size = 256M (z 8 na 32, potem 256)
+i zmieniłem upload_max_filesize = 64M (z 2 na 16, potem 64).
 
 
 
