@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\File;
 use App\Entity\Item;
 use App\Entity\Photo;
+use App\Form\EditAboutForm;
 use App\Form\ItemForm;
 use App\Repository\FileRepository;
 use App\Repository\ItemRepository;
@@ -130,12 +131,22 @@ final class MainController extends AbstractController
      * @throws LoaderError
      */
     #[Route('/user/{user_id}', name: 'user_page')] // TODO replace id in route parameter with slug
-    public function user(int $user_id): Response {
+    public function user(Request $request, int $user_id): Response {
 
         $selectedUser = $this->userRepository->find($user_id);
+
+        $form = $this->createForm(EditAboutForm::class, $selectedUser);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($selectedUser);
+            $this->entityManager->flush();
+            return $this->redirectToRoute('user_page', ['user_id' => $user_id]);
+        }
         return new Response(
             $this->twig->render('main/user.html.twig', [
                 'user' => $selectedUser,
+                'editAboutForm' => $form->createView(),
             ])
         );
     }
@@ -192,7 +203,7 @@ final class MainController extends AbstractController
         return $this->redirectToRoute('item_page', ['item_id' => $back_to]);
     }
 
-    /** For passed Item (it may be new) creates a form, and */
+    /** For passed Item (it may be new) creates a form, submits data to database, adds files */
     public function handleForm(
         Request $request, Item $item
     ): FormInterface

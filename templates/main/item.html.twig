@@ -18,6 +18,9 @@
         .shy-link:hover {
             color: darkred;
         }
+        .green-link:hover {
+            color: darkgreen;
+        }
         .gallery-class {
             border: 2px solid grey;
             display: inline-flex;
@@ -129,6 +132,19 @@
                         </table>
                     </div>
                 </details>
+                <button onclick="openDialog()">delete item</button>
+                <dialog id="die">
+                    <p>Are you sure you want to delete {{ item.itemName }}?</p>
+                    <a class="shy-link" onclick="closeDialog()">NO</a> <a class="shy-link green-link" href="{{ path('delete_item', { item_id: item.id}) }}">YES</a>
+                </dialog>
+                <script>
+                    function openDialog() {
+                        document.getElementById("die").showModal();
+                    }
+                    function closeDialog() {
+                        document.getElementById("die").close();
+                    }
+                </script>
             {% endif %}
             <br/>
             <div>

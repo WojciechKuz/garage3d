@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\EditUserForm;
 use App\Form\RegistrationForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,20 +22,26 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationForm::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->render('registration/register.html.twig', [
+                'registrationForm' => $form,
+            ]);
+        }
+        // when form submitted and valid:
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+        /** @var string $plainPassword */
+        $plainPassword = $form->get('plainPassword')->getData();
 
-            $user->setAbout("");
-            $user->setRoles(["ROLE_USER"]);
+        // encode the plain password
+        $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+        $user->setAbout("");
+        $user->setRoles(["ROLE_USER"]);
 
-            // do anything else you need here, like send an email
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        // do anything else you need here, like send an email
 
             return $security->login($user, 'form_login', 'main');
         }

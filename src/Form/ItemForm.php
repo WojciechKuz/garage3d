@@ -38,6 +38,7 @@ class ItemForm extends AbstractType
                         ],
                     ]),
                 ],
+                'required' => false,
             ])
             ->add('description', TextareaType::class)
             ->add('images', FileType::class, [
@@ -54,7 +55,8 @@ class ItemForm extends AbstractType
                             ])
                         ]
                     ])
-                ]
+                ],
+                'required' => false,
             ])
             // TODO add private/public toggle
             ->add('submit', SubmitType::class)

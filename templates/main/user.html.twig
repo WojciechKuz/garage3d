@@ -21,6 +21,13 @@
             <h1>User not found</h1>
         {% else %}
             <h2>{{ user.username }}</h2>
+            <br>
+            {% if is_granted('ROLE_USER') and user.id == app.user.id %}
+                <details>
+                    <summary>Edit information about yourself</summary>
+                    {{ form(editAboutForm) }}
+                </details>
+            {% endif %}
             <br/>
             <p>{{ user.about }}</p>
             <!--{/% if user.id == app.user.id %}
