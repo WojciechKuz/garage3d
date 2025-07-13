@@ -48,9 +48,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Item::class, mappedBy: 'author')]
     private Collection $items;
 
+    /**
+     * @var Collection<int, Likes>
+     */
+    #[ORM\OneToMany(targetEntity: Likes::class, mappedBy: 'whoLikes', orphanRemoval: true)]
+    private Collection $likedItems;
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
+        $this->likedItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -174,6 +181,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($item->getAuthor() === $this) {
                 $item->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Likes>
+     */
+    public function getLikedItems(): Collection
+    {
+        return $this->likedItems;
+    }
+
+    public function addLikedItem(Likes $likedItem): static
+    {
+        if (!$this->likedItems->contains($likedItem)) {
+            $this->likedItems->add($likedItem);
+            $likedItem->setWhoLikes($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikedItem(Likes $likedItem): static
+    {
+        if ($this->likedItems->removeElement($likedItem)) {
+            // set the owning side to null (unless already changed)
+            if ($likedItem->getWhoLikes() === $this) {
+                $likedItem->setWhoLikes(null);
             }
         }
 

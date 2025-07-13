@@ -4,14 +4,18 @@ namespace App\Controller;
 
 use App\Entity\File;
 use App\Entity\Item;
+use App\Entity\Likes;
 use App\Entity\Photo;
+use App\Entity\User;
 use App\Form\EditAboutForm;
 use App\Form\ItemForm;
 use App\Repository\FileRepository;
 use App\Repository\ItemRepository;
+use App\Repository\LikesRepository;
 use App\Repository\PhotoRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormInterface;
@@ -38,6 +42,7 @@ final class MainController extends AbstractController
         private ItemRepository $itemRepository,
         private FileRepository $fileRepository,
         private PhotoRepository $photoRepository,
+        private LikesRepository $likesRepository,
         private EntityManagerInterface $entityManager,
         private SluggerInterface $slugger,
         #[Autowire('%kernel.project_dir%/public/uploads/stl')] private string $stlDirectory,
@@ -71,7 +76,7 @@ final class MainController extends AbstractController
      * @throws LoaderError
      */
     #[Route('/browse/{offset}', name: 'item_list')]
-    public function items(int $offset): Response // why Request does not work?
+    public function items(int $offset): Response
     {
         $paginatedItems = $this->itemRepository->getItemPaginator($offset);
         $itemCount = $this->itemRepository->count(); // all elements
@@ -91,11 +96,41 @@ final class MainController extends AbstractController
     }
 
     /**
+     * @throws Exception
+     */
+    #[Route('/like/{item_id}', name: 'like')]
+    public function like(int $item_id): Response {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $loggedInUser = $this->getUser();
+        if ($loggedInUser == null) {
+            throw new Exception('Logged in user is null!');
+        }
+        if($this->likesRepository->checkIsLiked($loggedInUser->getId(), $item_id) == 0) {
+            // like
+            $like = new Likes();
+            $like->setWhoLikes($loggedInUser);
+            $like->setLikedItem($this->itemRepository->find($item_id));
+            $this->entityManager->persist($like);
+            $this->entityManager->flush();
+        } else {
+            // remove like
+            $like = $this->likesRepository->findLike($loggedInUser->getId(), $item_id);
+            if ($like == null) {
+                return $this->redirectToRoute('item_page', ['item_id' => $item_id]);
+                //throw new Exception('Like not found, can\'t remove it.');
+            }
+            $this->entityManager->remove($like);
+            $this->entityManager->flush();
+        }
+        return $this->redirectToRoute('item_page', ['item_id' => $item_id]);
+    }
+
+    /**
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
      */
-    #[Route('/item/{item_id}', name: 'item_page')] // TODO replace id in route parameter with slug
+    #[Route('/item/{item_id}', name: 'item_page')]
     public function item(Request $request, int $item_id): Response {
 
         $selectedItem = $this->itemRepository->find($item_id);
@@ -103,11 +138,18 @@ final class MainController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->redirectToRoute('item_page', ['item_id' => $item_id]);
         }
+        $loggedInUser = $this->getUser();
+        $isLiked = 0;
+        if($loggedInUser != null) {
+            $isLiked = $this->likesRepository->checkIsLiked($loggedInUser->getId(), $selectedItem->getId());
+        }
 
         return new Response(
             $this->twig->render('main/item.html.twig', [
                 'item' => $selectedItem,
                 'editForm' => $form->createView(),
+                'likeCount' => $this->likesRepository->countLikesForItem($selectedItem->getId()),
+                'isLiked' => $isLiked,
             ])
         );
     }
@@ -117,7 +159,7 @@ final class MainController extends AbstractController
      * @throws RuntimeError
      * @throws LoaderError
      */
-    #[Route('/user/{user_id}', name: 'user_page')] // TODO replace id in route parameter with slug
+    #[Route('/user/{user_id}', name: 'user_page')]
     public function user(Request $request, int $user_id): Response {
 
         $selectedUser = $this->userRepository->find($user_id);
@@ -191,7 +233,7 @@ final class MainController extends AbstractController
     }
 
     /** For passed Item (it may be new) creates a form, submits data to database, adds files */
-    public function handleForm(
+    private function handleForm(
         Request $request, Item $item
     ): FormInterface
     {

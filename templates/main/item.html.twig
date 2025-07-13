@@ -104,8 +104,20 @@
             <h4>
                 by <a href="{{ path('user_page', { user_id: item.author.id }) }}" class="no-color-link">{{ item.author.username }}</a>
             </h4>
+            {{ likeCount }} 👍<br/>
+            {% if is_granted('ROLE_USER') %}
+                {% if isLiked == 0 %}
+                    <a href="{{ path('like', { item_id: item.id }) }}">Like 👍</a>
+                {% else %}
+                    You like this item. 👍
+                    <a href="{{ path('like', { item_id: item.id }) }}">Remove like</a>
+                {% endif %}
+            {% else %}
+                Log in to like item
+            {% endif %}
+            <br/>
             {% if is_granted('ROLE_USER') and item.author.id == app.user.id %}
-                <details>
+                <details style="margin-top: 16px;">
                     <summary>Edit Item</summary>
                     {{ form(editForm) }}
                     <br/>
@@ -132,7 +144,7 @@
                         </table>
                     </div>
                 </details>
-                <button onclick="openDialog()">delete item</button>
+                <button onclick="openDialog()" style="margin-bottom: 16px;">delete item</button>
                 <dialog id="die">
                     <p>Are you sure you want to delete {{ item.itemName }}?</p>
                     <a class="shy-link" onclick="closeDialog()">NO</a> <a class="shy-link green-link" href="{{ path('delete_item', { item_id: item.id}) }}">YES</a>
